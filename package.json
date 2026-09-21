@@ -10,7 +10,8 @@
     "preview": "vite preview",
     "preview:lan": "vite preview --host",
     "typecheck": "tsc -b --noEmit",
-    "images": "node scripts/optimize-images.mjs"
+    "images": "node scripts/optimize-images.mjs",
+    "icons": "node scripts/make-icons.mjs"
   },
   "dependencies": {
     "react": "^19.0.0",

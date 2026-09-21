@@ -1,8 +1,9 @@
 import { useState } from 'react'
+import { figureGroups } from '../data/catalog'
 import type { CollectibleItem, FigureCollection } from '../data/types'
 import { countCollected, isCollected, type CollectedState } from '../lib/store'
 import { ConfirmSheet } from './ConfirmSheet'
-import { FigureTile } from './FigureTile'
+import { PairCard } from './PairCard'
 
 interface Props {
   collection: FigureCollection
@@ -15,6 +16,7 @@ export function FigureGrid({ collection, collected, onToggle, onBack }: Props) {
   const [selected, setSelected] = useState<CollectibleItem | null>(null)
   const ids = collection.items.map((item) => item.id)
   const have = countCollected(collected, collection.id, ids)
+  const groups = figureGroups(collection)
 
   return (
     <main className="screen">
@@ -31,11 +33,11 @@ export function FigureGrid({ collection, collected, onToggle, onBack }: Props) {
       </p>
 
       <div className="grid">
-        {collection.items.map((item) => (
-          <FigureTile
-            key={item.id}
-            item={item}
-            collected={isCollected(collected, collection.id, item.id)}
+        {groups.map((group) => (
+          <PairCard
+            key={group.map((item) => item.id).join('+')}
+            items={group}
+            isCollected={(item) => isCollected(collected, collection.id, item.id)}
             onSelect={setSelected}
           />
         ))}

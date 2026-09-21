@@ -1,5 +1,6 @@
 import { catalog } from '../data/catalog'
 import { countCollected, type CollectedState } from '../lib/store'
+import { CollectionBanner } from './CollectionBanner'
 import { ProgressBar } from './ProgressBar'
 
 interface Props {
@@ -19,9 +20,7 @@ export function CollectionPicker({ collected, onOpen }: Props) {
           return (
             <li key={collection.id}>
               <button className="card" type="button" onClick={() => onOpen(collection.id)}>
-                <span className="card__emoji" aria-hidden="true">
-                  {collection.emoji}
-                </span>
+                <CollectionBanner collection={collection} />
                 <span className="card__body">
                   <span className="card__name">{collection.name}</span>
                   <span className="card__count">

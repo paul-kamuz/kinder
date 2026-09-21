@@ -8,6 +8,7 @@ export const catalog: FigureCollection[] = [
     id: 'disney-figures',
     name: 'Disney Figures',
     emoji: '🏰',
+    bannerKey: 'disney-figures',
     items: [
       { id: 'aladdin', name: 'Aladdin', emoji: '🧞', imageKey: 'alladin' },
       { id: 'donald', name: 'Donald Duck', emoji: '🦆', imageKey: 'donald' },
@@ -32,3 +33,5 @@ export const catalog: FigureCollection[] = [
 ]
 
 export const figureImageUrl = (imageKey: string) => `figures/${imageKey}.webp`
+
+export const collectionBannerUrl = (bannerKey: string) => `banners/${bannerKey}.webp`

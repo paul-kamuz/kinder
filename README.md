@@ -66,6 +66,8 @@ gives an app icon and a full-screen window.
 | `npm run preview` | Serve the production build (service worker active) |
 | `npm run typecheck` | Types only |
 | `npm run images` | Re-generate `public/figures/*.webp` from the iOS PNGs |
+| `npm run icons` | Re-generate the favicon / PWA icons from `assets/app-icon.webp` |
+| `npm run banners` | Re-generate `public/banners/*.webp` from `assets/collection-source.webp` |
 
 `npm run images` reads from `../local-kinder-disney-collection/...` by default; override
 with `FIGURE_SRC=/path/to/Assets.xcassets npm run images`. It converted the 18 source
@@ -74,7 +76,9 @@ PNGs from 1.8 MB to 283 KB.
 ## Layout
 
 ```
+assets/                   artwork sources (not published; inputs to scripts/)
 public/figures/*.webp     18 figure images
+public/banners/*.webp     collection card hero images
 src/data/catalog.ts       static catalog — the figures, in display order
 src/data/types.ts         FigureCollection / CollectibleItem
 src/lib/store.ts          localStorage read/write, collected-count helpers
@@ -90,6 +94,10 @@ scripts/                  one-off image and icon generators
 Append an entry to `catalog` in `src/data/catalog.ts` and drop its images in
 `public/figures/`. Nothing else changes: the picker, the counts and the persistence
 layer are all driven off the catalog.
+
+A collection's card shows `public/banners/<bannerKey>.webp` when `bannerKey` is set,
+and falls back to its `emoji` on a band of the same 16:9 shape otherwise — so the card
+never changes size, whether or not there is artwork.
 
 Catalog (static, shipped) is deliberately kept separate from user state
 (`{ collectionId: [itemId, …] }` in `localStorage`), so item ids must stay stable —

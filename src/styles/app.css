@@ -145,16 +145,16 @@ button {
 }
 
 .card {
-  display: flex;
-  align-items: center;
-  gap: 16px;
+  display: block;
   width: 100%;
-  padding: 20px;
+  padding: 0;
   border: 0;
   border-radius: var(--radius-card);
   background: var(--surface);
   box-shadow: var(--shadow);
   text-align: left;
+  /* Clips the banner's top corners to the card's radius. */
+  overflow: hidden;
   transition: transform 120ms ease;
 }
 
@@ -162,17 +162,27 @@ button {
   transform: scale(0.98);
 }
 
-.card__emoji {
-  flex: none;
-  font-size: 2.5rem;
-  line-height: 1;
+.card__banner {
+  display: block;
+  width: 100%;
+  /* The image is already cropped to 16:9, so nothing is cut here. */
+  aspect-ratio: 16 / 9;
+  height: auto;
+  object-fit: cover;
+  background: var(--surface-sunken);
+}
+
+.card__banner--fallback {
+  display: grid;
+  place-items: center;
+  font-size: 3rem;
 }
 
 .card__body {
   display: grid;
   gap: 6px;
   min-width: 0;
-  flex: 1;
+  padding: 16px 20px 20px;
 }
 
 .card__name {

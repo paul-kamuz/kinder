@@ -11,6 +11,9 @@ export interface CollectibleItem {
 export interface FigureCollection {
   id: string
   name: string
+  /** Shown when there is no banner, or the banner fails to load. */
   emoji: string
+  /** Basename in /banners, without extension. Optional. */
+  bannerKey?: string
   items: CollectibleItem[]
 }

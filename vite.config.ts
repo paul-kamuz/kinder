@@ -14,7 +14,7 @@ export default defineConfig({
       workbox: {
         // The whole app is ~300 KB of figures plus a tiny JS bundle, so
         // precaching everything makes it fully usable offline.
-        globPatterns: ['**/*.{js,css,html,svg,png,webp,ico}'],
+        globPatterns: ['**/*.{js,css,html,svg,png,webp,ico,woff2}'],
       },
       manifest: {
         name: 'My Collections',

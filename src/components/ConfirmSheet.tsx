@@ -38,7 +38,7 @@ export function ConfirmSheet({ item, collected, onConfirm, onDismiss }: Props) {
           <FigureImage item={item} collected={collected} size="sheet" />
         </div>
 
-        <h2 className="sheet__name">{item.name}</h2>
+        <h2 className={`sheet__name${collected ? ' name-outlined' : ''}`}>{item.name}</h2>
         <p className="sheet__question">
           {collected ? 'Do you want to take it out of your collection?' : 'Do you have this one?'}
         </p>

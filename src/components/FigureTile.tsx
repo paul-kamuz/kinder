@@ -24,7 +24,7 @@ export function FigureTile({ item, collected, onSelect }: Props) {
           </span>
         )}
       </span>
-      <span className="tile__name">{item.name}</span>
+      <span className={`tile__name${collected ? ' name-outlined' : ''}`}>{item.name}</span>
       <span className="visually-hidden">{collected ? 'collected' : 'not collected'}</span>
     </button>
   )

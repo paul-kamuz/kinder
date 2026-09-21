@@ -31,7 +31,8 @@ The app code itself carries no such restriction.
 | Styling | One plain CSS file, tokens at the top, light + dark |
 | Routing | Hash route, so the phone's back gesture closes the grid |
 | Persistence | `localStorage`, guarded with try/catch |
-| Offline | `vite-plugin-pwa`, precaches the whole app (~540 KB) |
+| Offline | `vite-plugin-pwa`, precaches the whole app (~620 KB) |
+| Type | Luckiest Guy (Apache-2.0), self-hosted — the display face kinder.com uses |
 
 No backend, no accounts, no runtime dependencies beyond React.
 
@@ -72,6 +73,15 @@ gives an app icon and a full-screen window.
 `npm run images` reads from `../local-kinder-disney-collection/...` by default; override
 with `FIGURE_SRC=/path/to/Assets.xcassets npm run images`. It converted the 18 source
 PNGs from 1.8 MB to 283 KB.
+
+## Deploys
+
+Pushing to `main` builds and publishes via GitHub Actions, usually within a minute.
+
+The service worker serves the app from its precache, so a fresh deploy would
+normally only appear on the *second* open. `src/main.tsx` reloads once when the
+new worker takes over, so the first open is enough. Collected state is in
+`localStorage` and survives that reload.
 
 ## Layout
 

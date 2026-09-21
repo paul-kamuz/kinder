@@ -1,3 +1,15 @@
+/* Luckiest Guy (Apache-2.0, Google Fonts) -- the same display face kinder.com
+   uses for its figure names. Self-hosted so the app stays offline-capable and
+   makes no third-party request. Latin subset only; it covers Latin-1, so
+   accented names work. */
+@font-face {
+  font-family: 'Luckiest Guy';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('/fonts/luckiest-guy-latin-400.woff2') format('woff2');
+}
+
 /* ---------------------------------------------------------------------------
    Design tokens. Restyling the app should mostly mean editing this block.
    --------------------------------------------------------------------------- */
@@ -24,6 +36,17 @@
   --tap-min: 48px;
 
   --font: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+  /* Display face for figure names. Falls back to the system stack. */
+  --font-display: 'Luckiest Guy', var(--font);
+  /* kinder.com's figure-name treatment: their exact fill, with a white
+     outline. They build the outline from an 8-direction text-shadow at 5px
+     on 50px text -- 0.1em -- so em keeps it in proportion at our sizes. */
+  --name-fill: #f3410e;
+  --name-outline: #fff;
+  /* Outline thickness. kinder.com uses 0.1em, but their names are 50px; at
+     tile size that much white swallows the red fill, so each size sets its
+     own value. */
+  --name-outline-w: 0.085em;
 
   color-scheme: light dark;
 }
@@ -298,6 +321,26 @@ button {
   box-shadow: var(--shadow);
 }
 
+/* The collected treatment: kinder.com's red fill with a white outline. Only
+   collected figures get it, so the name lights up when you tick one off.
+   Compound selectors, because a bare .name-outlined ties on specificity with
+   .tile__name / .sheet__name and would lose to their default grey.
+   An 8-direction shadow is used rather than -webkit-text-stroke, which would
+   thin the letterforms instead of sitting outside them. */
+.tile__name.name-outlined,
+.sheet__name.name-outlined {
+  color: var(--name-fill);
+  text-shadow:
+    calc(-1 * var(--name-outline-w)) calc(-1 * var(--name-outline-w)) 0 var(--name-outline),
+    0 calc(-1 * var(--name-outline-w)) 0 var(--name-outline),
+    var(--name-outline-w) calc(-1 * var(--name-outline-w)) 0 var(--name-outline),
+    var(--name-outline-w) 0 0 var(--name-outline),
+    var(--name-outline-w) var(--name-outline-w) 0 var(--name-outline),
+    0 var(--name-outline-w) 0 var(--name-outline),
+    calc(-1 * var(--name-outline-w)) var(--name-outline-w) 0 var(--name-outline),
+    calc(-1 * var(--name-outline-w)) 0 0 var(--name-outline);
+}
+
 .tile__name {
   display: block;
   margin-top: 8px;
@@ -308,14 +351,21 @@ button {
   max-height: 2.5em;
   overflow: hidden;
   color: var(--text-muted);
-  font-size: 0.8125rem;
-  font-weight: 600;
+  font-family: var(--font-display);
+  text-transform: uppercase;
+  /* Slightly larger than the old 0.8125rem: Luckiest Guy is dense, so it
+     needs a touch more room and tracking to stay readable at tile size.
+     line-height stays 1.25 so the 2.5em two-line cap above still holds. */
+  font-size: 0.875rem;
+  font-weight: 400;
+  letter-spacing: 0.02em;
   line-height: 1.25;
+  /* Thinner than the sheet's: at 14px the full 0.085em of white closes up
+     the counters and the red stops reading as red. */
+  --name-outline-w: 0.05em;
 }
 
-.tile[data-collected='true'] .tile__name {
-  color: var(--text);
-}
+
 
 /* ---------------------------------------------------------------------------
    Confirm sheet
@@ -363,9 +413,13 @@ button {
 }
 
 .sheet__name {
-  margin: 8px 0 4px;
-  font-size: 1.5rem;
-  font-weight: 800;
+  margin: 8px 0 6px;
+  color: var(--text-muted);
+  font-family: var(--font-display);
+  text-transform: uppercase;
+  font-size: 1.75rem;
+  font-weight: 400;
+  letter-spacing: 0.01em;
   text-align: center;
 }
 

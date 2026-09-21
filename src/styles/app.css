@@ -1,0 +1,438 @@
+/* ---------------------------------------------------------------------------
+   Design tokens. Restyling the app should mostly mean editing this block.
+   --------------------------------------------------------------------------- */
+:root {
+  --bg: #fdfcf8;
+  --surface: #ffffff;
+  --surface-sunken: #f1efe9;
+  --tile-empty: #eeece6;
+  --tile-full: #fdf0c4;
+  --text: #1c1b18;
+  --text-muted: #77736a;
+  --accent: #2eaa5a;
+  --accent-text: #ffffff;
+  --danger: #d94f43;
+  --quiet: #e6e3dc;
+  --shadow: 0 2px 10px rgb(28 27 24 / 8%);
+  --shadow-lifted: 0 -8px 40px rgb(28 27 24 / 18%);
+
+  --radius-tile: 20px;
+  --radius-card: 24px;
+  --radius-btn: 16px;
+
+  --gap: 16px;
+  --tap-min: 48px;
+
+  --font: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+
+  color-scheme: light dark;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #17161a;
+    --surface: #232228;
+    --surface-sunken: #2c2a31;
+    --tile-empty: #2a2930;
+    --tile-full: #4a401d;
+    --text: #f3f1ec;
+    --text-muted: #9c978e;
+    --quiet: #37353d;
+    --shadow: 0 2px 10px rgb(0 0 0 / 35%);
+    --shadow-lifted: 0 -8px 40px rgb(0 0 0 / 55%);
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   Base
+   --------------------------------------------------------------------------- */
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  /* Nothing in this app scrolls sideways; stop rubber-banding past the edges. */
+  overscroll-behavior-y: contain;
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font);
+  -webkit-font-smoothing: antialiased;
+  /* Keep text legible when the phone is turned sideways. */
+  -webkit-text-size-adjust: 100%;
+}
+
+button {
+  font: inherit;
+  color: inherit;
+  /* Removes the 300ms tap delay and the grey flash on iOS. */
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+  cursor: pointer;
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+/* ---------------------------------------------------------------------------
+   Screen shell
+   --------------------------------------------------------------------------- */
+.screen {
+  max-width: 680px;
+  margin: 0 auto;
+  /* env() keeps content clear of the notch and the home indicator. */
+  padding:
+    calc(16px + env(safe-area-inset-top)) calc(16px + env(safe-area-inset-right))
+    calc(32px + env(safe-area-inset-bottom)) calc(16px + env(safe-area-inset-left));
+}
+
+.screen__title {
+  margin: 8px 0 4px;
+  font-size: clamp(1.75rem, 7vw, 2.25rem);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+
+.screen__count {
+  margin: 0 0 20px;
+  color: var(--text-muted);
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.topbar {
+  display: flex;
+  margin-bottom: 4px;
+}
+
+.topbar__back {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  min-height: var(--tap-min);
+  padding: 0 12px 0 4px;
+  border: 0;
+  border-radius: var(--radius-btn);
+  background: none;
+  color: var(--text-muted);
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.topbar__back:active {
+  background: var(--surface-sunken);
+}
+
+/* ---------------------------------------------------------------------------
+   Collection picker
+   --------------------------------------------------------------------------- */
+.picker {
+  display: grid;
+  gap: var(--gap);
+  margin: 16px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.card {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  width: 100%;
+  padding: 20px;
+  border: 0;
+  border-radius: var(--radius-card);
+  background: var(--surface);
+  box-shadow: var(--shadow);
+  text-align: left;
+  transition: transform 120ms ease;
+}
+
+.card:active {
+  transform: scale(0.98);
+}
+
+.card__emoji {
+  flex: none;
+  font-size: 2.5rem;
+  line-height: 1;
+}
+
+.card__body {
+  display: grid;
+  gap: 6px;
+  min-width: 0;
+  flex: 1;
+}
+
+.card__name {
+  font-size: 1.25rem;
+  font-weight: 700;
+}
+
+.card__count {
+  color: var(--text-muted);
+  font-size: 0.9375rem;
+  font-weight: 600;
+}
+
+.progress {
+  height: 8px;
+  margin-top: 2px;
+  border-radius: 999px;
+  background: var(--surface-sunken);
+  overflow: hidden;
+}
+
+.progress__fill {
+  height: 100%;
+  border-radius: 999px;
+  background: var(--accent);
+  transition: width 260ms ease;
+}
+
+/* ---------------------------------------------------------------------------
+   Figure grid
+   --------------------------------------------------------------------------- */
+.grid {
+  display: grid;
+  /* auto-fill + minmax reflows from 3 columns on a phone to 6 on a tablet
+     without a single media query. */
+  grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+  gap: var(--gap);
+}
+
+.tile {
+  /* Block, not grid: a grid item would be "blockified", which overrides the
+     display:-webkit-box that .tile__name needs for its two-line clamp. */
+  display: block;
+  padding: 0;
+  border: 0;
+  background: none;
+  text-align: center;
+}
+
+.tile__art {
+  position: relative;
+  display: grid;
+  place-items: center;
+  /* Fixed ratio keeps the grid tidy while images load. */
+  aspect-ratio: 3 / 4;
+  border-radius: var(--radius-tile);
+  background: var(--tile-empty);
+  transition: background-color 200ms ease;
+}
+
+.tile[data-collected='true'] .tile__art {
+  background: var(--tile-full);
+}
+
+.tile:active .tile__art {
+  transform: scale(0.96);
+  transition: transform 80ms ease;
+}
+
+.figure-image {
+  width: 100%;
+  height: 100%;
+  padding: 10px;
+  object-fit: contain;
+  /* Grey and faded until collected -- the core "I don't have this yet" signal. */
+  filter: grayscale(100%);
+  opacity: 0.4;
+  transition: filter 240ms ease, opacity 240ms ease;
+}
+
+.figure-image[data-collected='true'] {
+  filter: none;
+  opacity: 1;
+}
+
+.figure-image--sheet {
+  /* An explicit height with width:auto keeps the aspect ratio. A percentage
+     height would not resolve here, because a centred grid item is not
+     stretched and so has no definite parent height to measure against. */
+  width: auto;
+  height: 220px;
+  padding: 0;
+}
+
+.figure-image--emoji {
+  display: grid;
+  place-items: center;
+  font-size: 2.5rem;
+  filter: none;
+}
+
+.tile__badge {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  display: grid;
+  place-items: center;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: var(--accent);
+  color: var(--accent-text);
+  box-shadow: var(--shadow);
+}
+
+.tile__name {
+  display: block;
+  margin-top: 8px;
+  /* Hard two-line cap (2 x line-height), so a long name can never push its
+     tile taller than its neighbours. A max-height is used rather than
+     -webkit-line-clamp because button and grid children are blockified,
+     which drops the display:-webkit-box the clamp depends on. */
+  max-height: 2.5em;
+  overflow: hidden;
+  color: var(--text-muted);
+  font-size: 0.8125rem;
+  font-weight: 600;
+  line-height: 1.25;
+}
+
+.tile[data-collected='true'] .tile__name {
+  color: var(--text);
+}
+
+/* ---------------------------------------------------------------------------
+   Confirm sheet
+   --------------------------------------------------------------------------- */
+.sheet {
+  width: 100%;
+  max-width: 100%;
+  margin: auto auto 0;
+  padding: 0;
+  border: 0;
+  background: none;
+}
+
+.sheet::backdrop {
+  background: rgb(0 0 0 / 45%);
+}
+
+.sheet__body {
+  display: grid;
+  justify-items: center;
+  padding: 12px 20px calc(24px + env(safe-area-inset-bottom));
+  border-radius: 28px 28px 0 0;
+  background: var(--surface);
+  box-shadow: var(--shadow-lifted);
+  animation: sheet-in 240ms cubic-bezier(0.32, 0.72, 0, 1);
+}
+
+@keyframes sheet-in {
+  from {
+    transform: translateY(100%);
+  }
+}
+
+.sheet__grabber {
+  width: 40px;
+  height: 5px;
+  margin-bottom: 12px;
+  border-radius: 999px;
+  background: var(--quiet);
+}
+
+.sheet__art {
+  display: grid;
+  place-items: center;
+}
+
+.sheet__name {
+  margin: 8px 0 4px;
+  font-size: 1.5rem;
+  font-weight: 800;
+  text-align: center;
+}
+
+.sheet__question {
+  margin: 0 0 20px;
+  color: var(--text-muted);
+  font-size: 1.0625rem;
+  font-weight: 600;
+  text-align: center;
+  text-wrap: balance;
+}
+
+.sheet__actions {
+  display: grid;
+  gap: 10px;
+  width: 100%;
+  max-width: 420px;
+}
+
+.btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 56px;
+  padding: 0 20px;
+  border: 0;
+  border-radius: var(--radius-btn);
+  font-size: 1.125rem;
+  font-weight: 700;
+  transition: transform 100ms ease;
+}
+
+.btn:active {
+  transform: scale(0.97);
+}
+
+.btn--go {
+  background: var(--accent);
+  color: var(--accent-text);
+}
+
+.btn--danger {
+  background: var(--danger);
+  color: #fff;
+}
+
+.btn--quiet {
+  background: var(--quiet);
+  color: var(--text);
+}
+
+/* Desktop: centre the sheet instead of docking it to the bottom edge. */
+@media (min-width: 560px) {
+  .sheet {
+    margin: auto;
+    max-width: 420px;
+  }
+
+  .sheet__body {
+    border-radius: 28px;
+    padding-bottom: 24px;
+  }
+
+  @keyframes sheet-in {
+    from {
+      transform: scale(0.94);
+      opacity: 0;
+    }
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}

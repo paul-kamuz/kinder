@@ -1,8 +1,9 @@
-import type { FigureCollection } from './types'
+import type { CollectibleItem, FigureCollection } from './types'
 
 // Static catalog, shipped with the app. User state (which ids are collected)
 // lives separately in src/lib/store.ts, so adding a collection here is enough.
-// Order is the fixed display order.
+// Order is the fixed display order -- for a paired collection, `pairs` sets it
+// and `items` is just the alphabetical roster.
 export const catalog: FigureCollection[] = [
   {
     id: 'disney-figures',
@@ -29,8 +30,37 @@ export const catalog: FigureCollection[] = [
       { id: 'tinker-bell', name: 'Tinker Bell', emoji: '🧚‍♀️', imageKey: 'tinker-bell' },
       { id: 'woody', name: 'Woody', emoji: '🤠', imageKey: 'woody' },
     ],
+    // The 18 figures ship as 9 two-figure sets, one per film.
+    pairs: [
+      ['pinocchio', 'geppetto'],
+      ['aladdin', 'genie'],
+      ['hercules', 'megara'],
+      ['woody', 'jessie'],
+      ['mr-incredible', 'miss-incredible'],
+      ['moana', 'maui'],
+      ['miguel', 'hector'],
+      ['peter-pan', 'tinker-bell'],
+      ['mickey', 'donald'],
+    ],
   },
 ]
+
+/**
+ * The grid's display order: each declared pair, then any figure no pair
+ * mentions, on its own. Unknown ids are dropped rather than crashing the grid,
+ * so a typo in `pairs` costs a tile, not the screen.
+ */
+export function figureGroups(collection: FigureCollection): CollectibleItem[][] {
+  const byId = new Map(collection.items.map((item) => [item.id, item]))
+  const paired = new Set(collection.pairs?.flat())
+
+  const pairs = (collection.pairs ?? [])
+    .map((ids) => ids.flatMap((id) => byId.get(id) ?? []))
+    .filter((group) => group.length > 0)
+  const loose = collection.items.filter((item) => !paired.has(item.id)).map((item) => [item])
+
+  return [...pairs, ...loose]
+}
 
 export const figureImageUrl = (imageKey: string) => `figures/${imageKey}.webp`
 

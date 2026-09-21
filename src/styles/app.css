@@ -25,10 +25,19 @@
   --accent-text: #ffffff;
   --danger: #d94f43;
   --quiet: #e6e3dc;
+  /* Pair card: a hairline frame by default, gold once both halves are in. */
+  --pair-line: #e2ded4;
+  --pair-gold: #edb843;
+  --pair-gold-soft: #fbf1d6;
+  --pair-ribbon-text: #3a2a06;
   --shadow: 0 2px 10px rgb(28 27 24 / 8%);
   --shadow-lifted: 0 -8px 40px rgb(28 27 24 / 18%);
 
   --radius-tile: 20px;
+  /* Inside a pair the two tiles sit flush: outer corners round, inner ones
+     tucked, so the two halves read as one shape. */
+  --radius-pair-outer: 16px;
+  --radius-pair-inner: 6px;
   --radius-card: 24px;
   --radius-btn: 16px;
 
@@ -58,6 +67,9 @@
     --surface-sunken: #2c2a31;
     --tile-empty: #2a2930;
     --tile-full: #4a401d;
+    --pair-line: #3a3842;
+    --pair-gold: #c9982f;
+    --pair-gold-soft: #3b3117;
     --text: #f3f1ec;
     --text-muted: #9c978e;
     --quiet: #37353d;
@@ -239,10 +251,90 @@ button {
    --------------------------------------------------------------------------- */
 .grid {
   display: grid;
-  /* auto-fill + minmax reflows from 3 columns on a phone to 6 on a tablet
-     without a single media query. */
-  grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
-  gap: var(--gap);
+  /* The grid is laid out in pairs, not figures: two pair-cards across on a
+     phone -- four figures to a row -- and three on anything wider, where the
+     nine pairs land as an exact 3 x 3. */
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px 12px;
+}
+
+/* An odd number of cards leaves one alone on the last row. Centre it, rather
+   than hanging it off the left edge. */
+.grid > .pair:last-child:nth-child(odd) {
+  grid-column: 1 / -1;
+  width: calc(50% - 6px);
+  margin-inline: auto;
+}
+
+@media (min-width: 560px) {
+  .grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  /* Three columns swallow the orphan; nothing left to centre. */
+  .grid > .pair:last-child:nth-child(odd) {
+    grid-column: auto;
+    width: auto;
+    margin-inline: 0;
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   Pair card
+   --------------------------------------------------------------------------- */
+.pair {
+  position: relative;
+  padding: 7px 7px 6px;
+  border: 1.5px solid var(--pair-line);
+  border-radius: 22px;
+  background: var(--surface);
+  transition: border-color 200ms ease, background-color 200ms ease;
+}
+
+.pair[data-complete='true'] {
+  border-color: var(--pair-gold);
+  background: var(--pair-gold-soft);
+  box-shadow: 0 0 0 3px rgb(237 184 67 / 18%);
+}
+
+.pair__ribbon {
+  position: absolute;
+  top: -9px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: inline-flex;
+  align-items: center;
+  height: 18px;
+  padding: 0 9px;
+  border-radius: 999px;
+  background: var(--pair-gold);
+  color: var(--pair-ribbon-text);
+  font-size: 0.625rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.pair__row {
+  display: grid;
+  /* minmax(0, 1fr) rather than a bare 1fr: a long single word like GEPPETTO
+     sets a min-content floor under a bare 1fr and widens its half of the
+     pair, leaving the two figures mismatched. */
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 3px;
+}
+
+/* A figure no pair claims keeps the plain standalone-tile look. */
+.pair[data-size='1'] {
+  padding: 0;
+  border-color: transparent;
+  background: none;
+  box-shadow: none;
+}
+
+.pair[data-size='1'] .pair__row {
+  grid-template-columns: minmax(0, 1fr);
 }
 
 .tile {
@@ -264,6 +356,16 @@ button {
   border-radius: var(--radius-tile);
   background: var(--tile-empty);
   transition: background-color 200ms ease;
+}
+
+.pair[data-size='2'] .tile:first-child .tile__art {
+  border-radius: var(--radius-pair-outer) var(--radius-pair-inner) var(--radius-pair-inner)
+    var(--radius-pair-outer);
+}
+
+.pair[data-size='2'] .tile:last-child .tile__art {
+  border-radius: var(--radius-pair-inner) var(--radius-pair-outer) var(--radius-pair-outer)
+    var(--radius-pair-inner);
 }
 
 .tile[data-collected='true'] .tile__art {
@@ -289,6 +391,19 @@ button {
 .figure-image[data-collected='true'] {
   filter: none;
   opacity: 1;
+}
+
+/* Out of flow, so the image never drives the frame's height. The sources are
+   all cropped tight to 375px tall but vary in width (Geppetto 217, Tinker Bell
+   264); left in flow, each one stretched or squashed its own tile. Absolute
+   positioning hands the 3:4 box back to .tile__art, and object-fit then draws
+   every figure to the same height. */
+.figure-image--tile {
+  position: absolute;
+  inset: 0;
+  /* Percentage padding scales with the tile, so the figures keep the same
+     breathing room at two columns as at three. */
+  padding: 8%;
 }
 
 .figure-image--sheet {
@@ -343,7 +458,7 @@ button {
 
 .tile__name {
   display: block;
-  margin-top: 8px;
+  margin-top: 6px;
   /* Hard two-line cap (2 x line-height), so a long name can never push its
      tile taller than its neighbours. A max-height is used rather than
      -webkit-line-clamp because button and grid children are blockified,
@@ -355,8 +470,10 @@ button {
   text-transform: uppercase;
   /* Slightly larger than the old 0.8125rem: Luckiest Guy is dense, so it
      needs a touch more room and tracking to stay readable at tile size.
-     line-height stays 1.25 so the 2.5em two-line cap above still holds. */
-  font-size: 0.875rem;
+     line-height stays 1.25 so the 2.5em two-line cap above still holds.
+     Four figures to a row leaves each name about 77px, so this sits a step
+     below the old 0.875rem. */
+  font-size: 0.75rem;
   font-weight: 400;
   letter-spacing: 0.02em;
   line-height: 1.25;

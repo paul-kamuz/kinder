@@ -16,4 +16,11 @@ export interface FigureCollection {
   /** Basename in /banners, without extension. Optional. */
   bannerKey?: string
   items: CollectibleItem[]
+  /**
+   * Figures that belong together, as pairs of item ids. The grid frames each
+   * pair as one card and sets the display order from this list; anything left
+   * out still shows, ungrouped, after the pairs. Optional: a collection
+   * without pairs renders as a plain grid.
+   */
+  pairs?: string[][]
 }

@@ -6,19 +6,21 @@ Tap-to-collect tracker for the Kinder x Playmobil x Disney figure set. Web versi
 Three screens: pick a collection, see every figure greyed out, tap one, confirm
 "I have it", it turns full colour. Simple enough for a child to use.
 
-## ⚠️ Keep this repo and any deployment private
+**Live:** https://paul-kamuz.github.io/web-kinder-disney-collection/
 
-The figure images are Ferrero/Kinder promo pictures of Disney and Playmobil figures.
-**Personal use only.** Do not publish the app or the images:
+## Image licensing
 
-- Do not make this repo public.
-- **Do not use GitHub Pages.** Pages from a private repo still serves a *publicly
-  reachable* site unless you are on GitHub Enterprise Cloud with Pages access control.
-- To use it on a phone off your home WiFi, prefer Cloudflare Pages behind Cloudflare
-  Access, or `tailscale serve` — both keep the site non-public.
+The figure images in `public/figures/` are Ferrero/Kinder promotional photographs of
+Disney and Playmobil figures. They are **not** original work and are **not** licensed
+for redistribution. This is a personal, non-commercial fan project published with them
+in place, as a deliberate choice.
 
-If the app is ever to be shared, replace `public/figures/` with your own photos or
-properly licensed art first.
+If a rights holder objects, the fix is to replace `public/figures/` with own
+photographs or licensed art. Note the originals are present throughout the git
+history, so a full removal means rewriting history (`git filter-repo`), not just
+deleting the files.
+
+The app code itself carries no such restriction.
 
 ## Stack
 
@@ -51,8 +53,8 @@ gives an app icon and a full-screen window.
 
 > Over plain `http://192.168.x.x` the **service worker will not register** — browsers
 > only allow it on HTTPS or localhost. You still get the home-screen icon and
-> `localStorage`; you do not get offline support. For real offline, serve over HTTPS
-> (Cloudflare Access or Tailscale, see above).
+> `localStorage`; you do not get offline support. The deployed site is HTTPS, so
+> offline works there.
 
 ## Scripts
 
